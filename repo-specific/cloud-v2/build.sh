@@ -18,4 +18,4 @@ git remote add heroku https://git.heroku.com/crownstone-cloud-v2.git
 yarn
 
 # Compile typescript to javascript
-npm build
+npm run build
