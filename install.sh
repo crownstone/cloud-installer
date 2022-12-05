@@ -1,17 +1,29 @@
 #!/bin/bash
 
+############
+# Settings #
+############
+
+# The github user to get the git repos from.
+# This can be changed to: https://github.com/Crownstone-Community
+GIT_REPO_ROOT="https://github.com/crownstone"
+
+# The names of the git repos to install.
+GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
+
+############
+
 # Exit when any command fails
 set -e
+
+# Get the scripts path: the path where this file is located.
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ $# -lt 1 ]; then
 	echo "Usage: $0 <path to install to>"
 	echo "Example: $0 ~/crownstone-cloud"
 	exit 1
 fi
-
-# This can be changed to: https://github.com/Crownstone-Community
-GIT_REPO_ROOT="https://github.com/crownstone"
-GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
 
 # Make sure the install dir is an absolute path, so we can always cd to it.
 INSTALL_DIR="$( realpath "$1" )"
@@ -96,6 +108,8 @@ npm install --global yarn
 echo "Installing requirements"
 sudo apt install git
 
+
+# Clones the repo, and checks out the latest tag.
 # $1 = repo name
 clone_and_checkout() {
 	cd "$INSTALL_DIR"
@@ -105,55 +119,35 @@ clone_and_checkout() {
 	git checkout "$latest_tag"
 }
 
-echo "Installing cloud v1"
-# https://github.com/crownstone/crownstone-cloud
-clone_and_checkout "crownstone-cloud"
-cd "$INSTALL_DIR"
-cd crownstone-cloud
-yarn
+# Builds the repo
+# $1 = repo name
+build() {
+	if [ -d "${INSTALL_DIR}/${1}" ]; then
+		cd "${INSTALL_DIR}/${1}"
+		bash --login "${THIS_DIR}/${1}/build.sh"
+	else
+		echo "No such directory: ${INSTALL_DIR}/${1}"
+	fi
+}
+
+# Creates a service for the repo
+# $1 = repo name
+install() {
+	if [ -d "${INSTALL_DIR}/${1}" ]; then
+		mkdir -p ~/.config/systemd/user/
+		cp "${THIS_DIR}/template.service" "~/.config/systemd/user/${1}.service"
+		sed -i "s/Description=.*/Description=${1}" "~/.config/systemd/user/${1}.service"
+		sed -i "s/ExecStart=.*/ExecStart=${THIS_DIR}/${1}/run.sh" "~/.config/systemd/user/${1}.service"
+		systemctl --user enable ${1}
+	else
+		echo "No such directory: ${INSTALL_DIR}/${1}"
+	fi
+}
 
 
-echo "Installing cloud v2"
-# https://github.com/crownstone/cloud-v2
-cd "$INSTALL_DIR"
-clone_and_checkout "cloud-v2"
-
-
-echo "Installing SSE server"
-cd "$INSTALL_DIR"
-# https://github.com/crownstone/crownstone-sse-server
-git clone "${GIT_REPO_ROOT}/crownstone-sse-server.git"
-
-echo "Installing webhook server"
-cd "$INSTALL_DIR"
-# https://github.com/crownstone/crownstone-webhooks
-git clone "${GIT_REPO_ROOT}/crownstone-webhooks.git"
-
-
-echo "Installing cron jobs"
-cd "$INSTALL_DIR"
-# https://github.com/crownstone/crownstone-cron
-git clone "${GIT_REPO_ROOT}/crownstone-cron.git"
-
-
-echo "Installing hub"
-cd "$INSTALL_DIR"
-# https://github.com/crownstone/hub
-git clone "${GIT_REPO_ROOT}/hub.git"
-
-
-exit 0
-
-# Make service
-mkdir -p ~/.config/systemd/user/
-cp crownstone.service ~/.config/systemd/user/
-#chmod a-x ~/.config/systemd/user/crownstone.service
-systemctl --user enable crownstone
-
-
-# Latest tag in current branch, include non annotated tags as well, don't show long format.
-latest_tag="$( git describe --tags --abbrev=0 )"
-# if [ "$latest_tag" == "" ]; then
-# 	echo "No tag found"
-# 	exit 1
-# fi
+for repo in $GIT_REPOS ; do
+	echo "Installing $repo"
+	clone_and_checkout "$repo"
+	build "$repo"
+	install "$repo"
+done
