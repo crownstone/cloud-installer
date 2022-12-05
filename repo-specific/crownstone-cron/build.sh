@@ -12,3 +12,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 nvm install 16
 nvm use 16
 npm install --global yarn
+
+yarn
+
+# add to cron: scheduledJobs
