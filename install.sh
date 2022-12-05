@@ -104,6 +104,16 @@ sudo apt install -y git
 clone_and_checkout() {
 	echo "${PREFIX}Downloading $1"
 	cd "$INSTALL_DIR"
+	if [ -e "$1" ]; then
+		echo "${PREFIX}${INSTALL_DIR}/${1} already exists, overwrite? [y/N]"
+		read answer
+		if [ "$answer" != "y" ]; then
+			echo "${PREFIX}Canceled installation"
+			return 1
+		fi
+		rm -rf "${INSTALL_DIR}/${1}"
+	fi
+
 	git clone "${GIT_REPO_ROOT}/${1}.git" "$1"
 	cd "$1"
 	latest_tag="$( git describe --tags --abbrev=0 )"
