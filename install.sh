@@ -1,5 +1,8 @@
 #!/bin/bash
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 ################
 ### Settings ###
 ################
@@ -12,7 +15,7 @@ GIT_REPO_ROOT="https://github.com/crownstone"
 GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
 
 # Print prefix
-PREFIX="[Crownstone installer] "
+PREFIX="${bold}[Cloud installer]${normal} "
 
 ################
 
@@ -140,7 +143,6 @@ install() {
 	echo "${PREFIX}Installing $1"
 	if [ -d "${INSTALL_DIR}/${1}" ]; then
 		mkdir -p ${HOME}/.config/systemd/user/
-		echo "cp ${THIS_DIR}/template.service ${HOME}/.config/systemd/user/${1}.service"
 		cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
 		sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
 		sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repo-specific/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
