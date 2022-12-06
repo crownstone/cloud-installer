@@ -136,6 +136,27 @@ install() {
 }
 
 
+# Adds a cron job, first checks if it already exists.
+# $1 = the line to add
+install_cron() {
+	echo "${PREFIX}Installing cron job"
+	
+	set +e
+	crontab -l 2>/dev/null | grep -F "$1" > /dev/null
+	result=$?
+	set -e
+
+	if [ $result -eq 0 ]; then
+		echo "${PREFIX}Cron job already installed"
+		return 0
+	fi
+
+	( crontab -l 2>/dev/null; echo "$1" ) | crontab -
+
+	echo "${PREFIX}Done installing cron job"
+}
+
+
 # Start a service
 # $1 = repo name
 start() {

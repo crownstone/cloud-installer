@@ -98,13 +98,25 @@ echo "${PREFIX}Installing requirements"
 sudo apt install -y git
 
 
-# Install all the git repos.
+echo "${PREFIX}Installing repos"
 for repo in $GIT_REPOS ; do
 	clone_and_checkout "$repo"
 	build "$repo"
 	install "$repo"
 	save_tag "$repo"
 	start "$repo"
+
+	if [ -f "${THIS_DIR}/repos/${repo}/cron.sh" ]; then
+		timing="0 4 * * *"
+		if [ -f "${THIS_DIR}/repos/${repo}/cron.txt" ]; then
+			timing="$( cat "${THIS_DIR}/repos/${repo}/cron.txt" )"
+		fi
+
+		install_cron "${timing} ${THIS_DIR}/repos/${repo}/cron.sh" "${INSTALL_DIR}/${repo}"
+	fi
 done
+
+echo "${PREFIX}Installing update script"
+install_cron "0 4 * * * ${THIS_DIR}/crownstone-cloud-update.sh"
 
 echo "${PREFIX}Install all done! Installed: $GIT_REPOS"
