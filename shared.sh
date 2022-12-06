@@ -64,23 +64,40 @@ clone_and_checkout() {
 }
 
 
-# Pulls the repo, and checks out the latest tag.
+# Pull the repo and checks out the latest tag.
 # $1 = repo name
 pull_and_checkout() {
 	echo "${PREFIX}Pulling $1"
 
-	cd "$INSTALL_DIR"
-	if [ ! -d "$1" ]; then
+	if [ ! -d "$INSTALL_DIR/$1" ]; then
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
 		return 0
 	fi
+	cd "$INSTALL_DIR/$1"
 
-	cd "$1"
 	git pull
 	latest_tag="$( git describe --tags --abbrev=0 )"
 	git checkout "$latest_tag"
 
 	echo "${PREFIX}Done pulling $1"
+}
+
+
+# Fetches new tags from the repo.
+# $1 = repo name
+update_tags() {
+	echo "${PREFIX}Fetching $1"
+
+	if [ ! -d "$INSTALL_DIR/$1" ]; then
+		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
+		return 0
+	fi
+	cd "$INSTALL_DIR/$1"
+
+	git fetch
+	latest_tag="$( git describe --tags --abbrev=0 )"
+
+	echo "${PREFIX}Done fetching $1"
 }
 
 
@@ -103,16 +120,39 @@ build() {
 # $1 = repo name
 install() {
 	echo "${PREFIX}Installing $1"
-	if [ -d "${INSTALL_DIR}/${1}" ]; then
-		mkdir -p ${HOME}/.config/systemd/user/
-		cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
-		sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
-		sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
-		systemctl --user enable ${1}
-	else
+
+	if [ ! -d "$INSTALL_DIR/$1" ]; then
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
+		return 1
 	fi
+
+	mkdir -p ${HOME}/.config/systemd/user/
+	cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
+	sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
+	sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
+	systemctl --user enable ${1}
+
 	echo "${PREFIX}Done installing $1"
+}
+
+
+# Start a service
+# $1 = repo name
+start() {
+	echo "${PREFIX}Starting $1"
+	systemctl --user restart ${1}
+	echo "${PREFIX}Done starting $1"
+}
+
+
+# Stop a service
+# $1 = repo name
+stop() {
+	echo "${PREFIX}Stopping $1"
+	set +e
+	systemctl --user stop ${1}
+	set -e
+	echo "${PREFIX}Done stopping $1"
 }
 
 
@@ -124,8 +164,8 @@ save_tag() {
 	if [ ! -d "$INSTALL_DIR/$1" ]; then
 		return 1
 	fi
-
 	cd "$INSTALL_DIR/$1"
+
 	latest_tag="$( git describe --tags --abbrev=0 )"
 	echo "$latest_tag" > "${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
 	echo "${PREFIX}Done saving tag of ${1}: $latest_tag"

@@ -21,8 +21,14 @@ source "${THIS_DIR}/shared.sh"
 
 # Update the repo: pulls, compares version, and builds.
 # $1 = repo name
-update () {
-	pull_and_checkout "$1"
+update() {
+	if [ ! -d "$INSTALL_DIR/$1" ]; then
+		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
+		return 1
+	fi
+	cd "$INSTALL_DIR/$1"
+
+	update_tags "$1"
 
 	prev_tag_file="${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
 	if [ -f $prev_tag_file ]; then
@@ -31,15 +37,19 @@ update () {
 		prev_tag=""
 	fi
 	
+	latest_tag="$( git describe --tags --abbrev=0 )"
 	if [ "$latest_tag" == "$prev_tag" ]; then
 		echo "No new tag. Still on $prev_tag"
 		return 0
 	fi
 
 	echo "New tag! Updating from $prev_tag to $latest_tag"
-
+	
+	stop "$1"
+	pull_and_checkout "$1"
 	build "$1"
 	save_tag "$1"
+	start "$1"
 }
 
 

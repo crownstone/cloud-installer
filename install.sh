@@ -104,6 +104,7 @@ for repo in $GIT_REPOS ; do
 	build "$repo"
 	install "$repo"
 	save_tag "$repo"
+	start "$repo"
 done
 
 echo "${PREFIX}Install all done! Installed: $GIT_REPOS"
