@@ -24,7 +24,7 @@ source "${THIS_DIR}/shared.sh"
 update () {
 	pull_and_checkout "$1"
 
-	prev_tag_file="${THIS_DIR}/repo-specific/${1}/${TAG_FILE_NAME}"
+	prev_tag_file="${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
 	if [ -f $prev_tag_file ]; then
 		prev_tag="$( cat $prev_tag_file )"
 	else

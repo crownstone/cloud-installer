@@ -90,7 +90,7 @@ build() {
 	echo "${PREFIX}Building $1"
 	if [ -d "${INSTALL_DIR}/${1}" ]; then
 		cd "${INSTALL_DIR}/${1}"
-		bash "${THIS_DIR}/repo-specific/${1}/build.sh"
+		bash "${THIS_DIR}/repos/${1}/build.sh"
 	else
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
 		return 1
@@ -107,7 +107,7 @@ install() {
 		mkdir -p ${HOME}/.config/systemd/user/
 		cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
 		sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
-		sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repo-specific/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
+		sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
 		systemctl --user enable ${1}
 	else
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
@@ -127,6 +127,6 @@ save_tag() {
 
 	cd "$INSTALL_DIR/$1"
 	latest_tag="$( git describe --tags --abbrev=0 )"
-	echo "$latest_tag" > "${THIS_DIR}/repo-specific/${1}/${TAG_FILE_NAME}"
+	echo "$latest_tag" > "${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
 	echo "${PREFIX}Done saving tag of ${1}: $latest_tag"
 }
