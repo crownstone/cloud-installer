@@ -35,7 +35,7 @@ install_mongo() {
 	fi
 
 	echo "${PREFIX}Using packages for Ubuntu $CODENAME"
-	echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${CODENNAME}/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+	echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${CODENAME}/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
 	sudo apt update
 	sudo apt install -y mongodb-org
