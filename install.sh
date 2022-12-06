@@ -76,6 +76,7 @@ while :; do
 	read answer
 	if [ "$answer" == "y" ]; then
 		install_mongo
+		break
 	elif [ "$answer" == "n" ]; then
 		break
 	else
