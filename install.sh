@@ -102,7 +102,7 @@ echo "${PREFIX}Installing repos"
 for repo in $GIT_REPOS ; do
 	clone_and_checkout "$repo"
 	build "$repo"
-	install "$repo"
+	install_service "$repo"
 	save_tag "$repo"
 	start "$repo"
 
@@ -118,5 +118,10 @@ done
 
 echo "${PREFIX}Installing update script"
 install_cron "0 4 * * * ${THIS_DIR}/crownstone-cloud-update.sh"
+
+# Save current tag
+cd ${THIS_DIR}
+latest_tag="$( git describe --tags --abbrev=0 )"
+echo "$latest_tag" > "${THIS_DIR}/${TAG_FILE_NAME}"
 
 echo "${PREFIX}Install all done! Installed: $GIT_REPOS"

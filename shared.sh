@@ -20,9 +20,6 @@ PREFIX="${bold}[Cloud installer]${normal} "
 # File that stores the latest built git tag.
 TAG_FILE_NAME="latest.tag"
 
-# File that stores the install parameters.
-INSTALL_FILE_NAME="install.txt"
-
 ################
 
 # Exit when any command fails
@@ -118,7 +115,7 @@ build() {
 
 # Creates a service for the repo
 # $1 = repo name
-install() {
+install_service() {
 	echo "${PREFIX}Installing $1"
 
 	if [ ! -d "$INSTALL_DIR/$1" ]; then
