@@ -112,12 +112,12 @@ for repo in $GIT_REPOS ; do
 			timing="$( cat "${THIS_DIR}/repos/${repo}/cron.txt" )"
 		fi
 
-		install_cron "${timing} ${THIS_DIR}/repos/${repo}/cron.sh" "${INSTALL_DIR}/${repo}"
+		install_cron "${timing}" "${THIS_DIR}/repos/${repo}/cron.sh" "${INSTALL_DIR}/${repo}"
 	fi
 done
 
 echo "${PREFIX}Installing update script"
-install_cron "0 4 * * * ${THIS_DIR}/crownstone-cloud-update.sh"
+install_cron "0 4 * * *" "${THIS_DIR}/crownstone-cloud-update.sh"
 
 # Save current tag
 cd ${THIS_DIR}

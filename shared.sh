@@ -134,21 +134,22 @@ install_service() {
 
 
 # Adds a cron job, first checks if it already exists.
-# $1 = the line to add
+# $1 = the timing in the form of: m h dom mon dow
+# $2 = the command to execute
 install_cron() {
 	echo "${PREFIX}Installing cron job"
 	
 	set +e
-	crontab -l 2>/dev/null | grep -F "$1" > /dev/null
+	crontab -l 2>/dev/null | grep -F "$2" > /dev/null
 	result=$?
 	set -e
 
 	if [ $result -eq 0 ]; then
-		echo "${PREFIX}Cron job already installed"
-		return 0
+		echo "${PREFIX}Cron job already installed, updating"
+		( crontab -l 2>/dev/null | grep -vF "$2" ) | crontab -
 	fi
 
-	( crontab -l 2>/dev/null; echo "$1" ) | crontab -
+	( crontab -l 2>/dev/null; echo "$1 $2" ) | crontab -
 
 	echo "${PREFIX}Done installing cron job"
 }
