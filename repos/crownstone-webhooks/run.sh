@@ -11,4 +11,4 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 cd "$1"
 nvm use 16
-node ./execute.js
+node ./execute.js &

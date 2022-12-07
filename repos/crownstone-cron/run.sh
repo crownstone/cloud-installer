@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash
 
 # Exit when any command fails
 set -e
@@ -11,4 +11,4 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 cd "$1"
 nvm use 16
-npm start
+npm start &

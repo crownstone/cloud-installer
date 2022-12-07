@@ -11,4 +11,4 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 
 cd "$1"
 nvm use 14
-npm start
+npm start &
