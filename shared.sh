@@ -17,8 +17,8 @@ normal=$(tput sgr0)
 # Print prefix
 PREFIX="${bold}[Cloud installer]${normal} "
 
-# File that stores the latest built git tag.
-TAG_FILE_NAME="latest.tag"
+# File that stores the installed git tag.
+TAG_FILE_NAME="installed.tag"
 
 ################
 
