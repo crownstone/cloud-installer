@@ -166,20 +166,6 @@ stop() {
 }
 
 
-# Get the stored tag of the current installed git tag.
-# Assumes to be in the correct dir already.
-# Result it set to variable "prev_tag"
-# $1 = repo name
-get_prev_tag() {
-	prev_tag_file="${TAG_FILE_NAME}"
-	if [ -f $prev_tag_file ]; then
-		prev_tag="$( cat $prev_tag_file )"
-	else
-		prev_tag=""
-	fi
-}
-
-
 # Fetches new tags from the repo.
 # Assumes to be in the correct dir already.
 # Result it set to variable "latest_tag"
@@ -191,6 +177,24 @@ get_latest_tag() {
 	latest_tag="$( git describe --tags $(git rev-list --tags --max-count=1) )"
 
 	echo "${PREFIX}Done fetching $1"
+}
+
+
+# Get the stored tag of the current installed git tag.
+# Result it set to variable "prev_tag"
+# $1 = repo name (use "self" for the installer repo)
+get_prev_tag() {
+	prev_tag_file="${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
+	if [ "$1" == "self" ]; then
+		prev_tag_file="$THIS_DIR/${TAG_FILE_NAME}"
+	fi
+
+	if [ -f $prev_tag_file ]; then
+		prev_tag="$( cat $prev_tag_file )"
+	else
+		echo "${PREFIX}No previous installed tag found. Expected file: $prev_tag_file"
+		prev_tag=""
+	fi
 }
 
 
