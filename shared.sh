@@ -150,7 +150,17 @@ install_cron() {
 		( crontab -l 2>/dev/null | grep -vF "$2" ) | crontab -
 	fi
 
+	# With an empty crontab, this will error and write nothing to crontab.
+	# So we have to ignore the error here.
+	set +e
 	( crontab -l 2>/dev/null; echo "$1 $2" ) | crontab -
+	result=$?
+	set -e
+
+	if [ $result -ne 0 ]; then
+		echo "${PREFIX}Failed to install cron job"
+		return $result
+	fi
 
 	echo "${PREFIX}Done installing cron job"
 }
