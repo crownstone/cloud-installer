@@ -30,10 +30,8 @@ set -e
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 echo "INSTALL_DIR=${INSTALL_DIR}"
-if [ -d "$INSTALL_DIR" ]; then
-	echo "yes"
-else
-	echo "no"
+if [ ! -d "$INSTALL_DIR" ]; then
+	echo "${PREFIX}No such directory: ${INSTALL_DIR}"
 	exit 1
 fi
 

@@ -14,6 +14,7 @@ fi
 
 # Make sure the install dir is an absolute path, so we can always cd to it.
 INSTALL_DIR="$( realpath "$1" )"
+echo "${PREFIX}Using self dir: $THIS_DIR"
 echo "${PREFIX}Using install dir: $INSTALL_DIR"
 
 source "${THIS_DIR}/shared.sh"
