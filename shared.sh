@@ -32,7 +32,7 @@ set -e
 # Get the scripts path: the path where this file is located.
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-echo "INSTALL_DIR=${INSTALL_DIR}"
+echo "${PREFIX}Using install dir: $INSTALL_DIR"
 if [ ! -d "$INSTALL_DIR" ]; then
 	echo "${PREFIX}No such directory: ${INSTALL_DIR}"
 	exit 1

@@ -14,9 +14,6 @@ fi
 
 # Make sure the install dir is an absolute path, so we can always cd to it.
 INSTALL_DIR="$( realpath "$1" )"
-echo "${PREFIX}Using self dir: $THIS_DIR"
-echo "${PREFIX}Using install dir: $INSTALL_DIR"
-
 source "${THIS_DIR}/shared.sh"
 
 # Update this repo first.
@@ -32,7 +29,7 @@ else
 
 	fetch_and_checkout "self"
 
-	bash "${THIS_DIR}/post-self-update.sh" "$prev_tag"
+	bash "${THIS_DIR}/post-self-update.sh" "$prev_tag" "$INSTALL_DIR"
 
 	save_tag "self"
 
