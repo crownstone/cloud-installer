@@ -112,7 +112,7 @@ for repo in $GIT_REPOS ; do
 			timing="$( cat "${THIS_DIR}/repos/${repo}/cron.txt" )"
 		fi
 
-		install_cron "${timing}" "${THIS_DIR}/repos/${repo}/cron.sh" "${INSTALL_DIR}/${repo}"
+		install_cron "${timing}" "${THIS_DIR}/repos/${repo}/cron.sh ${INSTALL_DIR}/${repo}"
 	fi
 done
 
