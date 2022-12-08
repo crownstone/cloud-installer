@@ -57,7 +57,7 @@ clone_and_checkout() {
 
 	git clone "${GIT_REPO_ROOT}/${1}.git" "$1"
 	cd "$1"
-	latest_tag="$( git describe --tags --abbrev=0 )"
+	get_latest_tag "$1"
 	git checkout "$latest_tag"
 	echo "${PREFIX}Done cloning $1"
 }
@@ -71,7 +71,7 @@ fetch_and_checkout() {
 
 	git fetch
 
-	latest_tag="$( git describe --tags --abbrev=0 )"
+	get_latest_tag "$1"
 	git checkout "$latest_tag"
 
 	echo "${PREFIX}Done checking out latest tag of $1"
@@ -187,7 +187,7 @@ get_latest_tag() {
 	echo "${PREFIX}Fetching $1"
 
 	git fetch --tags
-	latest_tag="$( git describe --tags --abbrev=0 )"
+	latest_tag="$( git describe --tags $(git rev-list --tags --max-count=1) )"
 
 	echo "${PREFIX}Done fetching $1"
 }
