@@ -12,11 +12,13 @@ GIT_REPO_ROOT="https://github.com/crownstone"
 #GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
 GIT_REPOS="crownstone-cron"
 
-# Unfortunately, tput doesn't seem to work when running as cron job.
-set +e
-bold=$(tput bold)
-normal=$(tput sgr0)
-set -e
+# tput doesn't work when running as cron job, because $TERM is undefined.
+bold = ""
+normal = ""
+if [ "$TERM" != "" ]; then
+	bold=$(tput bold)
+	normal=$(tput sgr0)
+fi
 
 # Print prefix
 PREFIX="${bold}[Cloud installer]${normal} "
