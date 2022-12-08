@@ -19,6 +19,7 @@ echo "${PREFIX}Using install dir: $INSTALL_DIR"
 source "${THIS_DIR}/shared.sh"
 
 # Update this repo first.
+echo "${PREFIX}Updating self"
 cd "$THIS_DIR"
 git fetch
 
@@ -30,7 +31,9 @@ else
 fi
 
 latest_tag="$( git describe --tags --abbrev=0 )"
-if [ "$latest_tag" != "$prev_tag" ]; then
+if [ "$latest_tag" == "$prev_tag" ]; then
+	echo "${PREFIX}No new tag. Still on $prev_tag"
+else
 	echo "${PREFIX}New tag! Updating self from $prev_tag to $latest_tag"
 	git pull
 	git checkout "$latest_tag"
@@ -47,6 +50,7 @@ fi
 # Update the repo: pulls, compares version, and builds.
 # $1 = repo name
 update() {
+	echo "${PREFIX}Updating $1"
 	if [ ! -d "$INSTALL_DIR/$1" ]; then
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
 		return 1
