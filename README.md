@@ -1,6 +1,19 @@
-# cloud-installer
+# Crownstone cloud installer
 
 Script to install the Crownstone cloud.
+
+This script installs the complete Crownstone cloud, and updates it as well.
+
+The Crownstone cloud uses MongoDB to store data. This script can install MongoDB as well. However, authorization will not be set up, though it will not be accessible via network.
+
+How to run the installer:
+```
+sudo apt update
+sudo apt install -y git
+git clone https://github.com/crownstone/cloud-installer.git
+cd cloud-installer
+./install.sh ~/crownstone-cloud
+```
 
 
 ## Open-source license
