@@ -13,8 +13,8 @@ GIT_REPO_ROOT="https://github.com/crownstone"
 GIT_REPOS="crownstone-cron"
 
 # tput doesn't work when running as cron job, because $TERM is undefined.
-bold = ""
-normal = ""
+bold=""
+normal=""
 if [ "$TERM" != "" ]; then
 	bold=$(tput bold)
 	normal=$(tput sgr0)
