@@ -1,0 +1,9 @@
+# Ignore files that store the last installed git tag version.
+*.tag
+
+# Ignore logs.
+*.log
+
+# Ignore hidden files, except git ignore files.
+.*
+!.gitignore
