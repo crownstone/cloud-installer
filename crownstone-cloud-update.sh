@@ -22,52 +22,36 @@ source "${THIS_DIR}/shared.sh"
 # Update this repo first.
 echo "${PREFIX}Updating self"
 cd "$THIS_DIR"
-git fetch
+get_latest_tag "self"
+get_prev_tag "self"
 
-prev_tag_file="${THIS_DIR}/${TAG_FILE_NAME}"
-if [ -f $prev_tag_file ]; then
-	prev_tag="$( cat $prev_tag_file )"
-else
-	prev_tag=""
-fi
-
-latest_tag="$( git describe --tags --abbrev=0 )"
 if [ "$latest_tag" == "$prev_tag" ]; then
 	echo "${PREFIX}No new tag. Still on $prev_tag"
 else
 	echo "${PREFIX}New tag! Updating self from $prev_tag to $latest_tag"
-	git pull
-	git checkout "$latest_tag"
+
+	fetch_and_checkout "self"
 
 	bash "${THIS_DIR}/post-self-update.sh" "$prev_tag"
 
-	# Save new tag
-	echo "$latest_tag" > "$prev_tag_file"
+	save_tag "self"
 
 	echo "${PREFIX}Updated self to $latest_tag"
 fi
 
 
-# Update the repo: pulls, compares version, and builds.
+# Update the repo: fetches, compares version, and builds.
 # $1 = repo name
 update() {
 	echo "${PREFIX}Updating $1"
-	if [ ! -d "$INSTALL_DIR/$1" ]; then
+	if [ ! -d "${INSTALL_DIR}/${1}" ]; then
 		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
 		return 1
 	fi
-	cd "$INSTALL_DIR/$1"
+	cd "${INSTALL_DIR}/${1}"
 
-	update_tags "$1"
-
-	prev_tag_file="${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
-	if [ -f $prev_tag_file ]; then
-		prev_tag="$( cat $prev_tag_file )"
-	else
-		prev_tag=""
-	fi
-	
-	latest_tag="$( git describe --tags --abbrev=0 )"
+	get_prev_tag "$1"
+	get_latest_tag "$1"
 	if [ "$latest_tag" == "$prev_tag" ]; then
 		echo "${PREFIX}No new tag. Still on $prev_tag"
 		return 0
@@ -76,7 +60,7 @@ update() {
 	echo "${PREFIX}New tag! Updating from $prev_tag to $latest_tag"
 	
 	stop "$1"
-	pull_and_checkout "$1"
+	fetch_and_checkout "$1"
 	build "$1"
 	save_tag "$1"
 	start "$1"

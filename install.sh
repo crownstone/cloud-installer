@@ -119,9 +119,9 @@ done
 echo "${PREFIX}Installing update script"
 install_cron "* * * * *" "${THIS_DIR}/crownstone-cloud-update.sh ${INSTALL_DIR} > ${THIS_DIR}/update.log 2>&1"
 
-# Save current tag
+# Save installed tag
 cd ${THIS_DIR}
-latest_tag="$( git describe --tags --abbrev=0 )"
-echo "$latest_tag" > "${THIS_DIR}/${TAG_FILE_NAME}"
+get_latest_tag "self"
+save_tag "self"
 
 echo "${PREFIX}Install all done! Installed: $GIT_REPOS"

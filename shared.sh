@@ -13,8 +13,10 @@ GIT_REPO_ROOT="https://github.com/crownstone"
 GIT_REPOS="crownstone-cron"
 
 # Unfortunately, tput doesn't seem to work when running as cron job.
+set +e
 bold=$(tput bold)
 normal=$(tput sgr0)
+set -e
 
 # Print prefix
 PREFIX="${bold}[Cloud installer]${normal} "
@@ -61,40 +63,18 @@ clone_and_checkout() {
 }
 
 
-# Pull the repo and checks out the latest tag.
+# Fetch the repo and checks out the latest tag.
+# Assumes to be in the correct dir already.
 # $1 = repo name
-pull_and_checkout() {
-	echo "${PREFIX}Pulling $1"
+fetch_and_checkout() {
+	echo "${PREFIX}Checking out latest tag of $1"
 
-	if [ ! -d "$INSTALL_DIR/$1" ]; then
-		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
-		return 0
-	fi
-	cd "$INSTALL_DIR/$1"
+	git fetch
 
-	git pull
 	latest_tag="$( git describe --tags --abbrev=0 )"
 	git checkout "$latest_tag"
 
-	echo "${PREFIX}Done pulling $1"
-}
-
-
-# Fetches new tags from the repo.
-# $1 = repo name
-update_tags() {
-	echo "${PREFIX}Fetching $1"
-
-	if [ ! -d "$INSTALL_DIR/$1" ]; then
-		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
-		return 0
-	fi
-	cd "$INSTALL_DIR/$1"
-
-	git fetch
-	latest_tag="$( git describe --tags --abbrev=0 )"
-
-	echo "${PREFIX}Done fetching $1"
+	echo "${PREFIX}Done checking out latest tag of $1"
 }
 
 
@@ -185,17 +165,54 @@ stop() {
 }
 
 
-# Save the latest tag of the repo to file.
+# Get the stored tag of the current installed git tag.
+# Assumes to be in the correct dir already.
+# Result it set to variable "prev_tag"
 # $1 = repo name
+get_prev_tag() {
+	prev_tag_file="${TAG_FILE_NAME}"
+	if [ -f $prev_tag_file ]; then
+		prev_tag="$( cat $prev_tag_file )"
+	else
+		prev_tag=""
+	fi
+}
+
+
+# Fetches new tags from the repo.
+# Assumes to be in the correct dir already.
+# Result it set to variable "latest_tag"
+# $1 = repo name
+get_latest_tag() {
+	echo "${PREFIX}Fetching $1"
+
+	git fetch --tags
+	latest_tag="$( git describe --tags --abbrev=0 )"
+
+	echo "${PREFIX}Done fetching $1"
+}
+
+
+# Save the latest tag of the repo to file.
+# $1 = repo name (use "self" for the installer repo)
 save_tag() {
 	echo "${PREFIX}Saving tag of $1"
 
-	if [ ! -d "$INSTALL_DIR/$1" ]; then
+	git_dir="${INSTALL_DIR}/${1}"
+	store_dir="${THIS_DIR}/repos/${1}"
+	if [ "$1" == "self" ]; then
+		git_dir="$THIS_DIR"
+		store_dir="$THIS_DIR"
+	fi
+
+	if [ ! -d "$git_dir" ]; then
+		echo "${PREFIX}No such directory: $git_dir"
 		return 1
 	fi
-	cd "$INSTALL_DIR/$1"
 
-	latest_tag="$( git describe --tags --abbrev=0 )"
-	echo "$latest_tag" > "${THIS_DIR}/repos/${1}/${TAG_FILE_NAME}"
+	cd "$git_dir"
+
+	get_latest_tag "$1"
+	echo "$latest_tag" > "${store_dir}/${TAG_FILE_NAME}"
 	echo "${PREFIX}Done saving tag of ${1}: $latest_tag"
 }
