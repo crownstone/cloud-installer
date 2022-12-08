@@ -34,6 +34,9 @@ else
 	save_tag "self"
 
 	echo "${PREFIX}Updated self to $latest_tag"
+
+	# Exit, so that the repos will be updated with new update script.
+	exit 0
 fi
 
 
