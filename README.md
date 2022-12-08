@@ -12,6 +12,7 @@ sudo apt update
 sudo apt install -y git
 git clone https://github.com/crownstone/cloud-installer.git
 cd cloud-installer
+git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 ./install.sh ~/crownstone-cloud
 ```
 
