@@ -9,7 +9,8 @@
 GIT_REPO_ROOT="https://github.com/crownstone"
 
 # The names of the git repos to install.
-GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
+#GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
+GIT_REPOS="crownstone-cron"
 
 bold=$(tput bold)
 normal=$(tput sgr0)
