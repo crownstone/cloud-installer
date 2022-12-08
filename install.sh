@@ -117,7 +117,7 @@ for repo in $GIT_REPOS ; do
 done
 
 echo "${PREFIX}Installing update script"
-install_cron "* * * * *" "${THIS_DIR}/crownstone-cloud-update.sh ${INSTALL_DIR} > ${THIS_DIR}/update.log"
+install_cron "* * * * *" "${THIS_DIR}/crownstone-cloud-update.sh ${INSTALL_DIR} > ${THIS_DIR}/update.log 2>&1"
 
 # Save current tag
 cd ${THIS_DIR}
