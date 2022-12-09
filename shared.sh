@@ -28,6 +28,9 @@ TAG_FILE_NAME="installed.tag"
 # File which existence marks an update being in progress.
 LOCK_FILE_NAME="update.lock"
 
+# Prefix for the service name.
+SERVICE-PREFIX="cs-"
+
 ################
 
 # Exit when any command fails
@@ -108,10 +111,10 @@ install_service() {
 	fi
 
 	mkdir -p ${HOME}/.config/systemd/user/
-	cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
-	sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
-	sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
-	systemctl --user enable ${1}
+	cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${SERVICE-PREFIX}${1}.service"
+	sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${SERVICE-PREFIX}${1}.service"
+	sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${SERVICE-PREFIX}${1}.service"
+	systemctl --user enable "${SERVICE-PREFIX}${1}"
 
 	echo "${PREFIX}Done installing $1"
 }
@@ -153,7 +156,7 @@ install_cron() {
 # $1 = repo name
 start() {
 	echo "${PREFIX}Starting $1"
-	systemctl --user restart ${1}
+	systemctl --user restart "${SERVICE-PREFIX}${1}"
 	echo "${PREFIX}Done starting $1"
 }
 
@@ -163,7 +166,7 @@ start() {
 stop() {
 	echo "${PREFIX}Stopping $1"
 	set +e
-	systemctl --user stop ${1}
+	systemctl --user stop "${SERVICE-PREFIX}${1}"
 	set -e
 	echo "${PREFIX}Done stopping $1"
 }
