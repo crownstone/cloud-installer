@@ -97,14 +97,40 @@ fi
 echo "${PREFIX}Installing requirements"
 sudo apt install -y git
 
+# Generate tokens
+SSE_TOKEN="$( openssl rand -hex 128 )"
+AGGREGATION_TOKEN="$( openssl rand -hex 128 )"
+SANITATION_TOKEN="$( openssl rand -hex 128 )"
+SESSION_SECRET="$( openssl rand -hex 128 )"
+CROWNSTONE_USER_ADMIN_KEY="$( openssl rand -hex 128 )"
+DEBUG_TOKEN="nosecret"
+
+# Make a copy of the template env vars, and fill in generated tokens.
+# $1 = repo
+install_env_vars() {
+	cd "${THIS_DIR}/repos/${repo}"
+	cp "template-environment-variables.sh" "environment-variables.sh"
+	sed -i -re "s;CROWNSTONE_CLOUD_SSE_TOKEN=;CROWNSTONE_CLOUD_SSE_TOKEN=${SSE_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SSE_TOKEN=;SSE_TOKEN=${SSE_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;AGGREGATION_TOKEN=;AGGREGATION_TOKEN=${AGGREGATION_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SANITATION_TOKEN=;SANITATION_TOKEN=${SANITATION_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SESSION_SECRET=;SESSION_SECRET=${SESSION_SECRET};g" "environment-variables.sh"
+	sed -i -re "s;CROWNSTONE_USER_ADMIN_KEY=;CROWNSTONE_USER_ADMIN_KEY=${CROWNSTONE_USER_ADMIN_KEY};g" "environment-variables.sh"
+	sed -i -re "s;DEBUG_TOKEN=;DEBUG_TOKEN=${DEBUG_TOKEN};g" "environment-variables.sh"
+}
 
 echo "${PREFIX}Installing repos"
 for repo in $GIT_REPOS ; do
 	clone_and_checkout "$repo"
 	build "$repo"
-	install_service "$repo"
+	install_env_vars "$repo"
+
+	if [ -f "${THIS_DIR}/repos/${repo}/run.sh" ]; then
+		install_service "$repo"
+		start "$repo"
+	fi
+
 	save_tag "$repo"
-	start "$repo"
 
 	if [ -f "${THIS_DIR}/repos/${repo}/cron.sh" ]; then
 		timing="0 4 * * *"
