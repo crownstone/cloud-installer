@@ -70,6 +70,7 @@ update() {
 	
 	stop "$1"
 	fetch_and_checkout "$1"
+	bash "${THIS_DIR}/repos/${1}/post-update.sh" "$prev_tag"
 	build "$1"
 	save_tag "$1"
 	start "$1"
