@@ -25,6 +25,9 @@ PREFIX="${bold}[Cloud installer]${normal} "
 # File that stores the installed git tag.
 TAG_FILE_NAME="installed.tag"
 
+# File which existence marks an update being in progress.
+LOCK_FILE_NAME="update.lock"
+
 ################
 
 # Exit when any command fails

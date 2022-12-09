@@ -16,6 +16,15 @@ fi
 INSTALL_DIR="$( realpath "$1" )"
 source "${THIS_DIR}/shared.sh"
 
+# Check lock file
+lock_file="${THIS_DIR}/${LOCK_FILE_NAME}"
+if [ -e "$lock_file" ]; then
+	echo "${PREFIX}Update already in progess: $lock_file exists."
+	exit 1
+fi
+
+touch "$lock_file"
+
 # Update this repo first.
 echo "${PREFIX}Updating self"
 cd "$THIS_DIR"
@@ -72,4 +81,5 @@ for repo in $GIT_REPOS ; do
 	update "$repo"
 done
 
+rm "$lock_file"
 echo "${PREFIX}Update all done!"
