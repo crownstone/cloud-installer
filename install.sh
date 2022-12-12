@@ -85,6 +85,24 @@ while :; do
 done
 
 
+# Insert MongoDB initial data.
+if [ ! -f "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}" ]; then
+	echo "${PREFIX}Using template MongoDB script to insert initial data."
+	cp "${THIS_DIR}/${MONGODB_INIT_SCRIPT_TEMPLATE_FILE_NAME}" "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+fi
+echo "${PREFIX}MongoDB script file: ${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+echo "${PREFIX}Edit it to make sure all values are correct."
+echo "${PREFIX}Is the MongoDB script correct? [y/N]"
+read answer
+if [ "$answer" != "y" ]; then
+	echo "${PREFIX}Installation canceled."
+	exit 1
+fi
+echo "${PREFIX}Running MongoDB script to insert initial data."
+mongo "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+echo "${PREFIX}Done running MongoDB script to insert initial data."
+
+
 echo "${PREFIX}Node Version Manager (nvm) is used to install different versions of Node.js and Node Package Manager (npm)."
 echo "${PREFIX}If it's already installed, you can skip this step."
 echo "${PREFIX}Install nvm? [Y/n]"
