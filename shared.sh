@@ -9,8 +9,7 @@
 GIT_REPO_ROOT="https://github.com/crownstone"
 
 # The names of the git repos to install.
-#GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
-GIT_REPOS="crownstone-cron"
+GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
 
 # tput doesn't work when running as cron job, because $TERM is undefined.
 set +e
