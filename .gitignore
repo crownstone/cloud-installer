@@ -6,6 +6,7 @@
 
 # Ignore generated or user made config files.
 environment-variables.sh
+mongo-init.txt
 
 # Ignore hidden files, except git ignore files.
 .*
