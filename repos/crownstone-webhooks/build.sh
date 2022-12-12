@@ -14,3 +14,6 @@ nvm use 16
 npm install --global yarn
 
 yarn
+
+# Compile typescript to javascript
+npm run build

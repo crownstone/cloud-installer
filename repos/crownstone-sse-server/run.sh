@@ -17,4 +17,4 @@ source "${this_path}/environment-variables.sh"
 
 cd "$1"
 nvm use 16
-npm start &
+node ./dist/Server.js &

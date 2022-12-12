@@ -14,3 +14,6 @@ nvm use 14
 npm install --global yarn
 
 yarn
+
+# No need to compile typescript to javascript, this repo comes with a dist dir.
+#npm run build
