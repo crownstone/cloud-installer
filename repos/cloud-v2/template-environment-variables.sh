@@ -17,3 +17,4 @@ FILES_DB_URL="mongodb://localhost:27017/files_v1"
 
 # Other settings.
 EMAIL_VALIDATION_REQUIRED="false"
+ALLOW_IMPORT="YES"
