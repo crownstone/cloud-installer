@@ -18,14 +18,15 @@ DEBUG=""
 STRONGLOOP_CLUSTER="2"
 
 # MongoDB settings.
+# The URLs are prefixed with: mongodb://
 # You can fill in username and password here if you configured those.
-# For example: mongodb://user:password@127.0.0.1:27017/data_v1?authSource=admin&ssl=true&sslValidate=false
+# For example: user:password@127.0.0.1:27017/data_v1?authSource=admin&ssl=true&sslValidate=false
 DATA_TABLE="users_v1"
-USER_DB_URL="mongodb://localhost:27017/users_v1"
+USER_DB_URL="localhost:27017/users_v1"
 DATA_TABLE="data_v1"
-DATA_DB_URL="mongodb://localhost:27017/data_v1"
+DATA_DB_URL="localhost:27017/data_v1"
 FILES_TABLE="files_v1"
-FILES_DB_URL="mongodb://localhost:27017/files_v1"
+FILES_DB_URL="localhost:27017/files_v1"
 
 # Config variables for email validation, when enabled these should be filled in.
 BASE_URL="localhost"
