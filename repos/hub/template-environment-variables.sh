@@ -1,9 +1,4 @@
-#!/bin/bash --login
-
-# Tokens generated at install.
-AGGREGATION_TOKEN=
-SANITATION_TOKEN=
-SSE_TOKEN=
+#!/bin/bash
 
 # By default, every USB device is tried to see if that's a crownstone dongle.
 #
@@ -17,26 +12,26 @@ SSE_TOKEN=
 # CS_UART_SEARCH_BY_ID_PATTERN: "(usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_.*|.*Crownstone_dongle.*)"
 
 # Where the config is written.
-CS_HUB_CONFIG_PATH=""
+export CS_HUB_CONFIG_PATH=""
 
 # Where the openssl-hub.conf is found. Defaults to ./config
-CS_HUB_SLL_CONFIG_PATH=""
+export CS_HUB_SLL_CONFIG_PATH=""
 
 # Where the https cert.pem and key.pem files are written to. Defaults to ./config/https
-CS_HUB_HTTPS_CERTIFICATE_PATH=""
+export CS_HUB_HTTPS_CERTIFICATE_PATH=""
 
 # Log settings
-CS_ENABLE_FILE_LOGGING="false"
-CS_FILE_LOGGING_DIRNAME="logs"
-CS_FILE_LOGGING_LEVEL="info"
-CS_CONSOLE_LOGGING_LEVEL="none"
-DEBUG=""
-DEBUG_HIDE_DATE="false"
-DEBUG_LEVEL="INFO"
-DEBUG_JSON="false"
+export CS_ENABLE_FILE_LOGGING="false"
+export CS_FILE_LOGGING_DIRNAME="logs"
+export CS_FILE_LOGGING_LEVEL="info"
+export CS_CONSOLE_LOGGING_LEVEL="none"
+export DEBUG=""
+export DEBUG_HIDE_DATE="false"
+export DEBUG_LEVEL="INFO"
+export DEBUG_JSON="false"
 
 # Ports at which this server is available.
 # http port
-HTTP_PORT="3200"
+export HTTP_PORT="3200"
 # https port
-PORT="3201"
+export PORT="3201"

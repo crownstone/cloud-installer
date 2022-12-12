@@ -1,17 +1,17 @@
-#!/bin/bash --login
+#!/bin/bash
 
 # Tokens generated at install.
-CROWNSTONE_CLOUD_SSE_TOKEN=
-DEBUG_TOKEN=
+export CROWNSTONE_CLOUD_SSE_TOKEN=
+export DEBUG_TOKEN=
 
 # Port at which this server is available.
-PORT="8000"
+export PORT="8000"
 
 # Used only for a log.
-BASE_URL="localhost"
+export BASE_URL="localhost"
 
 # The endpoint for cloud v1, should match its settings.
-CROWNSTONE_CLOUD_SOCKET_ENDPOINT="http://127.0.0.1:3000"
+export CROWNSTONE_CLOUD_SOCKET_ENDPOINT="http://127.0.0.1:3000"
 
 # The endpoint for cloud v2, should match its settings.
-CROWNSTONE_CLOUD_NEXT_SOCKET_ENDPOINT="http://127.0.0.1:3050"
+export CROWNSTONE_CLOUD_NEXT_SOCKET_ENDPOINT="http://127.0.0.1:3050"
