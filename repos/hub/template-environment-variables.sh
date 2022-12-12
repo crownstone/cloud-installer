@@ -15,7 +15,7 @@
 export CS_HUB_CONFIG_PATH=""
 
 # Where the openssl-hub.conf is found. Defaults to ./config
-export CS_HUB_SLL_CONFIG_PATH=""
+export CS_HUB_SLL_CONFIG_PATH="./config"
 
 # Where the https cert.pem and key.pem files are written to. Defaults to ./config/https
 export CS_HUB_HTTPS_CERTIFICATE_PATH=""
