@@ -13,8 +13,6 @@ nvm install 16
 nvm use 16
 npm install --global yarn
 
-git remote add heroku https://git.heroku.com/crownstone-cloud-v2.git
-
 yarn
 
 # Compile typescript to javascript
