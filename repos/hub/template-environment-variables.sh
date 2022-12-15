@@ -35,3 +35,11 @@ export DEBUG_JSON="false"
 export HTTP_PORT="3200"
 # https port
 export PORT="3201"
+
+# Cloud and addresses.
+export CLOUD_V1_URL="http://127.0.0.1:3000/api/"
+export CLOUD_V2_URL="http://127.0.0.1:3050/api/"
+export SSE_URL="http://127.0.0.1:8000/sse"
+export LOGIN_URL="http://127.0.0.1:3000/api/users/login"
+export hubLoginBase="http://127.0.0.1:3000/api/Hubs/"
+
