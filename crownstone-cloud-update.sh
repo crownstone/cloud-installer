@@ -45,6 +45,8 @@ else
 	echo "${PREFIX}Updated self to $latest_tag"
 
 	# Exit, so that the repos will be updated with new update script.
+	# But don't forget to remove the lock file.
+	rm "$lock_file"
 	exit 0
 fi
 
