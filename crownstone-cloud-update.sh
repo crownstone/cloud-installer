@@ -48,39 +48,16 @@ else
 	exit 0
 fi
 
-
-# Update the repo: fetches, compares version, and builds.
-# $1 = repo name
-update() {
-	echo "${PREFIX}Updating $1"
-	if [ ! -d "${INSTALL_DIR}/${1}" ]; then
-		echo "${PREFIX}No such directory: ${INSTALL_DIR}/${1}"
-		return 1
-	fi
-	cd "${INSTALL_DIR}/${1}"
-
-	get_prev_tag "$1"
-	get_latest_tag "$1"
-	if [ "$latest_tag" == "$prev_tag" ]; then
-		echo "${PREFIX}No new tag. Still on $prev_tag"
-		return 0
-	fi
-
-	echo "${PREFIX}New tag! Updating from $prev_tag to $latest_tag"
-	
-	stop "$1"
-	fetch_and_checkout "$1"
-	bash "${THIS_DIR}/repos/${1}/post-update.sh" "$prev_tag"
-	build "$1"
-	save_tag "$1"
-	start "$1"
-}
-
-
 # Update all the git repos.
+# If a repo fails to update, that shouldn't block other from updating, or from removing the lock file.
+set +e
 for repo in $GIT_REPOS ; do
-	update "$repo"
+	${THIS_DIR}/update.sh "$INSTALL_DIR" "$repo"
+	if [ $? -ne 0 ]; then
+		echo "${PREFIX}Failed to update $repo"
+	fi
 done
+set -e
 
 rm "$lock_file"
 echo "${PREFIX}Update all done!"
