@@ -138,7 +138,18 @@ install_env_vars() {
 }
 
 echo "${PREFIX}Installing repos"
+
+installed_repos=""
 for repo in $GIT_REPOS ; do
+	# Optional repo to install
+	if [ "$repo" == "crownstone-cloud-bridge" ]; then
+		echo "${PREFIX}Install $repo? [Y/n]"
+		read answer
+		if [ "$answer" == "n" ]; then
+			break
+		fi
+	fi
+
 	clone_and_checkout "$repo"
 	build "$repo"
 	install_env_vars "$repo"
@@ -158,9 +169,11 @@ for repo in $GIT_REPOS ; do
 
 		install_cron "${timing}" "${THIS_DIR}/repos/${repo}/cron.sh ${INSTALL_DIR}/${repo}"
 	fi
+
+	installed_repos="${installed_repos} $repo"
 done
 
-echo "${PREFIX}Installing update script"
+echo "${PREFIX}Installing self update script"
 install_cron "* * * * *" "${THIS_DIR}/crownstone-cloud-update.sh ${INSTALL_DIR} > ${THIS_DIR}/update.log 2>&1"
 
 # Save installed tag
@@ -168,4 +181,4 @@ cd ${THIS_DIR}
 get_latest_tag "self"
 save_tag "self"
 
-echo "${PREFIX}Install all done! Installed: $GIT_REPOS"
+echo "${PREFIX}Install all done! Installed: $installed_repos"
