@@ -22,7 +22,7 @@ source "${THIS_DIR}/shared.sh"
 echo "${PREFIX}Updating $2"
 if [ ! -d "${INSTALL_DIR}/${2}" ]; then
 	echo "${PREFIX}No such directory: ${INSTALL_DIR}/${2}"
-	return 1
+	exit 1
 fi
 cd "${INSTALL_DIR}/${2}"
 
@@ -30,7 +30,7 @@ get_prev_tag "$2"
 get_latest_tag "$2"
 if [ "$latest_tag" == "$prev_tag" ]; then
 	echo "${PREFIX}No new tag. Still on $prev_tag"
-	return 0
+	exit 0
 fi
 
 echo "${PREFIX}New tag! Updating from $prev_tag to $latest_tag"
