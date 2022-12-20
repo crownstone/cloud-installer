@@ -1,8 +1,8 @@
 # Crownstone cloud installer
 
-Script to install the Crownstone cloud.
+This repository maintains scripts to install your own instance of Crownstone cloud. (For example on a raspberry pi.)
 
-This script installs the complete Crownstone cloud, and updates it as well.
+This `install.sh` script installs the complete Crownstone cloud, and updates it as well.
 
 The Crownstone cloud uses MongoDB to store data. This script can install MongoDB as well. However, authorization will not be set up, though it will not be accessible via network.
 
