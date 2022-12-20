@@ -1,12 +1,14 @@
 # Crownstone cloud installer
 
-This repository maintains scripts to install your own instance of Crownstone cloud. (For example on a raspberry pi.)
+This repository maintains scripts to install your own instance of Crownstone cloud on a local machine such as a raspberry pi (3/4/400).
 
 This `install.sh` script installs the complete Crownstone cloud, and updates it as well.
 
 The Crownstone cloud uses MongoDB to store data. This script can install MongoDB as well. However, authorization will not be set up, though it will not be accessible via network.
 
 ## Installing
+
+When building for a raspberry pi, ensure to use the 64-bit OS. Please double check your system requirements.
 
 How to run the installer:
 ```
@@ -18,8 +20,7 @@ git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 ./install.sh ~/crownstone-cloud
 ```
 
-Some questions may be asked
-
+Some installation confirmations may be asked during the installation process and you might need to update the keys of `mongo-init.js`.
 
 You can see logs with `journalctl --user`.
 
