@@ -28,7 +28,7 @@ You can see logs with `journalctl --user`.
 
 Every user in your sphere will have to download their data at [https://next.crownstone.rocks/user-data](https://next.crownstone.rocks/user-data).
 
-Then, go to your own cloud v2 server [http://127.0.0.1:3050/import-data](http://127.0.0.1:3050/import-data), with the IP address of your server, and the port configured for cloud v2.
+Then, go to your own cloud v2 server [http://127.0.0.1:3050/import-data](http://127.0.0.1:3050/import-data) and the port configured for cloud v2. Make sure to replace `127.0.0.1` with the IP address of your server, you can find it with the command `hostname -I`.
 
 Now upload the downloaded data. Note that this can take a while, wait until the page changes into "DONE".
 
