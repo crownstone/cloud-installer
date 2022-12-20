@@ -56,13 +56,8 @@ clone_and_checkout() {
 	cd "$INSTALL_DIR"
 
 	if [ -e "$1" ]; then
-		echo "${PREFIX}${INSTALL_DIR}/${1} already exists, overwrite? [y/N]"
-		read answer
-		if [ "$answer" != "y" ]; then
-			echo "${PREFIX}Canceled installation"
-			return 1
-		fi
-		rm -rf "${1}"
+		echo "${PREFIX}Overwriting ${INSTALL_DIR}/${1}"
+		rm -rf "$1"
 	fi
 
 	git clone "${GIT_REPO_ROOT}/${1}.git" "$1"

@@ -143,9 +143,19 @@ installed_repos=""
 for repo in $GIT_REPOS ; do
 	# Optional repo to install
 	if [ "$repo" == "crownstone-cloud-bridge" ]; then
-		echo "${PREFIX}Install $repo? [Y/n]"
+		echo "${PREFIX}Install ${repo}? [Y/n]"
 		read answer
 		if [ "$answer" == "n" ]; then
+			echo "${PREFIX}Skipping $repo"
+			break
+		fi
+	fi
+
+	if [ -e "${INSTALL_DIR}/${repo}" ]; then
+		echo "${PREFIX}${INSTALL_DIR}/${repo} already exists, overwrite? [y/N]"
+		read answer
+		if [ "$answer" != "y" ]; then
+			echo "${PREFIX}Skipping $repo"
 			break
 		fi
 	fi
