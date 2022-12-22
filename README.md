@@ -41,6 +41,8 @@ Now you can change the cloud address in the Crownstone app settings.
 
 Again, fill in the IP address of your server, and use the ports as configured.
 
+Note: After a preliminary success message you may get a warning pop-up saying that the cloud endpoints are not stored. This is a known bug. As long as the preliminary message reported success, you're all good.
+
 
 ## Open-source license
 
