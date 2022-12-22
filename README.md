@@ -34,6 +34,8 @@ Now upload the downloaded data. Note that this can take a while, wait until the 
 
 ## App settings
 
+Make sure to configure your pi to have a static ip address. Usually this can be done by logging in on your router.
+
 Now you can change the cloud address in the Crownstone app settings.
 - Address of custom cloud v1: http://127.0.0.1:3000/api/
 - Address of custom cloud v2: http://127.0.0.1:3050/api/
