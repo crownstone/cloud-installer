@@ -85,6 +85,24 @@ while :; do
 done
 
 
+# Insert MongoDB initial data.
+if [ ! -f "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}" ]; then
+	echo "${PREFIX}Using template MongoDB script to insert initial data."
+	cp "${THIS_DIR}/${MONGODB_INIT_SCRIPT_TEMPLATE_FILE_NAME}" "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+fi
+echo "${PREFIX}MongoDB script file: ${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+echo "${PREFIX}Edit it to make sure all values are correct."
+echo "${PREFIX}Is the MongoDB script correct? [y/N]"
+read answer
+if [ "$answer" != "y" ]; then
+	echo "${PREFIX}Installation canceled."
+	exit 1
+fi
+echo "${PREFIX}Running MongoDB script to insert initial data."
+mongo "${THIS_DIR}/${MONGODB_INIT_SCRIPT_FILE_NAME}"
+echo "${PREFIX}Done running MongoDB script to insert initial data."
+
+
 echo "${PREFIX}Node Version Manager (nvm) is used to install different versions of Node.js and Node Package Manager (npm)."
 echo "${PREFIX}If it's already installed, you can skip this step."
 echo "${PREFIX}Install nvm? [Y/n]"
@@ -97,14 +115,61 @@ fi
 echo "${PREFIX}Installing requirements"
 sudo apt install -y git
 
+# Generate tokens
+SSE_TOKEN="$( openssl rand -hex 128 )"
+AGGREGATION_TOKEN="$( openssl rand -hex 128 )"
+SANITATION_TOKEN="$( openssl rand -hex 128 )"
+SESSION_SECRET="$( openssl rand -hex 128 )"
+CROWNSTONE_USER_ADMIN_KEY="$( openssl rand -hex 128 )"
+DEBUG_TOKEN="nosecret"
+
+# Make a copy of the template env vars, and fill in generated tokens.
+# $1 = repo
+install_env_vars() {
+	cd "${THIS_DIR}/repos/${repo}"
+	cp "template-environment-variables.sh" "environment-variables.sh"
+	sed -i -re "s;CROWNSTONE_CLOUD_SSE_TOKEN=.*;CROWNSTONE_CLOUD_SSE_TOKEN=${SSE_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SSE_TOKEN=.*;SSE_TOKEN=${SSE_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;AGGREGATION_TOKEN=.*;AGGREGATION_TOKEN=${AGGREGATION_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SANITATION_TOKEN=.*;SANITATION_TOKEN=${SANITATION_TOKEN};g" "environment-variables.sh"
+	sed -i -re "s;SESSION_SECRET=.*;SESSION_SECRET=${SESSION_SECRET};g" "environment-variables.sh"
+	sed -i -re "s;CROWNSTONE_USER_ADMIN_KEY=.*;CROWNSTONE_USER_ADMIN_KEY=${CROWNSTONE_USER_ADMIN_KEY};g" "environment-variables.sh"
+	sed -i -re "s;DEBUG_TOKEN=.*;DEBUG_TOKEN=${DEBUG_TOKEN};g" "environment-variables.sh"
+}
 
 echo "${PREFIX}Installing repos"
+
+installed_repos=""
 for repo in $GIT_REPOS ; do
+	# Optional repo to install
+	if [ "$repo" == "crownstone-cloud-bridge" ]; then
+		echo "${PREFIX}Install ${repo}? [Y/n]"
+		read answer
+		if [ "$answer" == "n" ]; then
+			echo "${PREFIX}Skipping $repo"
+			break
+		fi
+	fi
+
+	if [ -e "${INSTALL_DIR}/${repo}" ]; then
+		echo "${PREFIX}${INSTALL_DIR}/${repo} already exists, overwrite? [y/N]"
+		read answer
+		if [ "$answer" != "y" ]; then
+			echo "${PREFIX}Skipping $repo"
+			break
+		fi
+	fi
+
 	clone_and_checkout "$repo"
 	build "$repo"
-	install_service "$repo"
+	install_env_vars "$repo"
+
+	if [ -f "${THIS_DIR}/repos/${repo}/run.sh" ]; then
+		install_service "$repo"
+		start "$repo"
+	fi
+
 	save_tag "$repo"
-	start "$repo"
 
 	if [ -f "${THIS_DIR}/repos/${repo}/cron.sh" ]; then
 		timing="0 4 * * *"
@@ -114,9 +179,11 @@ for repo in $GIT_REPOS ; do
 
 		install_cron "${timing}" "${THIS_DIR}/repos/${repo}/cron.sh ${INSTALL_DIR}/${repo}"
 	fi
+
+	installed_repos="${installed_repos} $repo"
 done
 
-echo "${PREFIX}Installing update script"
+echo "${PREFIX}Installing self update script"
 install_cron "* * * * *" "${THIS_DIR}/crownstone-cloud-update.sh ${INSTALL_DIR} > ${THIS_DIR}/update.log 2>&1"
 
 # Save installed tag
@@ -124,4 +191,4 @@ cd ${THIS_DIR}
 get_latest_tag "self"
 save_tag "self"
 
-echo "${PREFIX}Install all done! Installed: $GIT_REPOS"
+echo "${PREFIX}Install all done! Installed: $installed_repos"

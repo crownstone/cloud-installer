@@ -1,9 +1,10 @@
-#!/bin/bash --login
+#!/bin/bash
 
 # Exit when any command fails
 set -e
 
 # Assumed to be executed in the root dir of the repo.
+# Will also be executed during an update.
 
 echo "Loading nvm"
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"

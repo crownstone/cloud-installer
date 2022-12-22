@@ -9,8 +9,7 @@
 GIT_REPO_ROOT="https://github.com/crownstone"
 
 # The names of the git repos to install.
-#GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub"
-GIT_REPOS="crownstone-cron"
+GIT_REPOS="crownstone-cloud cloud-v2 crownstone-sse-server crownstone-webhooks crownstone-cron hub crownstone-cloud-bridge"
 
 # tput doesn't work when running as cron job, because $TERM is undefined.
 set +e
@@ -24,6 +23,16 @@ PREFIX="${bold}[Cloud installer]${normal} "
 
 # File that stores the installed git tag.
 TAG_FILE_NAME="installed.tag"
+
+# File which existence marks an update being in progress.
+LOCK_FILE_NAME="update.lock"
+
+# MongoDB script file to insert data on install.
+MONGODB_INIT_SCRIPT_FILE_NAME="mongo-init.js"
+MONGODB_INIT_SCRIPT_TEMPLATE_FILE_NAME="mongo-init-template.js"
+
+# Prefix for the service name.
+SERVICE_PREFIX="cs-"
 
 ################
 
@@ -47,13 +56,8 @@ clone_and_checkout() {
 	cd "$INSTALL_DIR"
 
 	if [ -e "$1" ]; then
-		echo "${PREFIX}${INSTALL_DIR}/${1} already exists, overwrite? [y/N]"
-		read answer
-		if [ "$answer" != "y" ]; then
-			echo "${PREFIX}Canceled installation"
-			return 1
-		fi
-		rm -rf "${1}"
+		echo "${PREFIX}Overwriting ${INSTALL_DIR}/${1}"
+		rm -rf "$1"
 	fi
 
 	git clone "${GIT_REPO_ROOT}/${1}.git" "$1"
@@ -105,10 +109,10 @@ install_service() {
 	fi
 
 	mkdir -p ${HOME}/.config/systemd/user/
-	cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${1}.service"
-	sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${1}.service"
-	sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${1}.service"
-	systemctl --user enable ${1}
+	cp "${THIS_DIR}/template.service" "${HOME}/.config/systemd/user/${SERVICE_PREFIX}${1}.service"
+	sed -i -re "s;Description=.*;Description=${1};" "${HOME}/.config/systemd/user/${SERVICE_PREFIX}${1}.service"
+	sed -i -re "s;ExecStart=.*;ExecStart=${THIS_DIR}/repos/${1}/run.sh ${INSTALL_DIR}/${1};" "${HOME}/.config/systemd/user/${SERVICE_PREFIX}${1}.service"
+	systemctl --user enable "${SERVICE_PREFIX}${1}"
 
 	echo "${PREFIX}Done installing $1"
 }
@@ -150,7 +154,7 @@ install_cron() {
 # $1 = repo name
 start() {
 	echo "${PREFIX}Starting $1"
-	systemctl --user restart ${1}
+	systemctl --user restart "${SERVICE_PREFIX}${1}"
 	echo "${PREFIX}Done starting $1"
 }
 
@@ -160,7 +164,7 @@ start() {
 stop() {
 	echo "${PREFIX}Stopping $1"
 	set +e
-	systemctl --user stop ${1}
+	systemctl --user stop "${SERVICE_PREFIX}${1}"
 	set -e
 	echo "${PREFIX}Done stopping $1"
 }

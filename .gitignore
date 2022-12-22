@@ -4,6 +4,10 @@
 # Ignore logs.
 *.log
 
+# Ignore generated or user made config files.
+environment-variables.sh
+mongo-init.js
+
 # Ignore hidden files, except git ignore files.
 .*
 !.gitignore
